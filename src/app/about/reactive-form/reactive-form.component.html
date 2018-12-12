@@ -1,31 +1,48 @@
 <h4>Reactive Form</h4>
-<form [formGroup]="contactForm">
-  <div style="display: inline-grid;">
-    <label for="topic">Temat:</label>
-    <input type="text" id="topic" formControlName="topic">
+<form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+    <div style="display: inline-grid;">
+        <label for="topic">Temat:</label>
+        <input type="text" id="topic" formControlName="topic">
+        <div *ngIf="contactForm.get('topic').invalid && contactForm.get('topic').dirty">Pole wymagane!</div>
 
-    <label for="message">Wiadomość:</label>
-    <textarea rows="4" cols="50" id="message" name="message" formControlName="message"></textarea>
+        <label for="message">Wiadomość:</label>
+        <textarea rows="4" cols="50" id="message" name="message" formControlName="message"></textarea>
+        <div *ngIf="contactForm.get('message').errors && contactForm.get('message').errors.minlength">Za krótka
+            wiadomosć
+        </div>
+        <div *ngIf="contactForm.get('message').invalid && contactForm.get('message').dirty">Pole wymagane!</div>
 
-    <label for="name">Name:</label>
-    <input type="text" id="name" formControlName="name">
+        <label for="name">Name:</label>
+        <input type="text" id="name" formControlName="name">
+        <div *ngIf="contactForm.get('name').invalid && contactForm.get('name').dirty">Pole wymagane!</div>
 
-    <label for="email">E-mail:</label>
-    <input type="email" id="email" formControlName="email">
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" formControlName="email">
+        <div *ngIf="contactForm.get('email').errors && contactForm.get('email').errors.dirty">Zły adres e-mail</div>
+        <div *ngIf="contactForm.get('email').invalid && contactForm.get('email').dirty">Pole wymagane!</div>
 
 
-    <label for="course">Który kurs jest najfajniejszy?</label>
-    <select id="course" formControlName="course">
-      <option *ngFor="let course of courses" [value]="course">{{course}}</option>
-    </select>
+        <label for="course">Który kurs jest najfajniejszy?</label>
+        <select id="course" formControlName="course">
+            <option *ngFor="let course of courses" [value]="course">{{course}}</option>
+        </select>
 
-    <div>
-      <label for="bot">Jesteś botem?</label>
-      <input [value]="true" type="radio" name="bot" id="bot" formControlName="bot">Tak
-      <input [value]="false" type="radio" name="bot" id="bot" formControlName="bot">Nie
+        <div>
+            <label for="bot">Jesteś botem?</label>
+            <input [value]="true" type="radio" name="bot" id="bot" formControlName="bot">Tak
+            <input [value]="false" type="radio" name="bot" id="bot" formControlName="bot">Nie
+        </div>
+
+        <label>Czego chcesz się nauczyć?</label>
+        <div formArrayName="questions">
+            <div *ngFor="let question of contactForm.get('questions')['controls']; let i = index">
+                {{i + 1}}<input type="text" [formControlName]="i">
+            </div>
+            <div *ngIf="contactForm.get('questions').errors && contactForm.get('questions').errors['forbbidenCourse']">Zakazany kurs</div>
+            <button type="button" (click)="addQuestions()">Dodaj</button>
+        </div>
+
+        <button type="submit" [disabled]="contactForm.invalid">Wyslij</button>
+        <button type="button" (click)="onReset()">Reset</button>
     </div>
-
-    <button type="submit" >Wyslij</button>
-    <button type="reset">Reset</button>
-  </div>
 </form>
